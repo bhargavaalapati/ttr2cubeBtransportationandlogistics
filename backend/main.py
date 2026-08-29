@@ -33,6 +33,9 @@ class RouteState(BaseModel):
     punctuality: int = 78
     reports: List[Report] = []
 
+class AIReportInput(BaseModel):
+    text: str
+
 # --- Initial Scenarios ---
 SCENARIOS = {
     "A": RouteState(eta=7, base_crowd_score=25, stop_reliability=58, punctuality=78, reports=[
@@ -171,6 +174,47 @@ def simulate_time():
         rep.age_minutes += 2
     return {"status": "success"}
 
+@app.post("/api/ai_report")
+def submit_ai_report(payload: AIReportInput):
+    global current_state, report_counter
+    text = payload.text.lower()
+    
+    # 1. Deterministic NLP extraction (Simulating an LLM/GenAI call)
+    extracted_crowding = "MODERATE"
+    if any(word in text for word in ["full", "packed", "rush", "no space"]):
+        extracted_crowding = "FULL"
+    elif any(word in text for word in ["empty", "seats", "clear"]):
+        extracted_crowding = "EMPTY"
+    elif any(word in text for word in ["crowd", "standing"]):
+        extracted_crowding = "CROWDED"
+        
+    skipped_stop = any(word in text for word in ["skipped", "didn't stop", "missed", "past", "ghost"])
+    
+    # 2. Apply the extracted data
+    new_rep = Report(
+        id=report_counter,
+        crowding=extracted_crowding,
+        age_minutes=0,
+        trust_score=0.99,
+        location_verified=True
+    )
+    report_counter += 1
+    current_state.reports.insert(0, new_rep)
+    
+    # If they reported a ghost stop, instantly tank the stop reliability
+    if skipped_stop:
+        current_state.stop_reliability = max(10, current_state.stop_reliability - 20)
+        
+    return {
+        "status": "success",
+        "extracted_intent": {
+            "crowding": extracted_crowding,
+            "ghost_stop_detected": skipped_stop,
+            "confidence": 0.94
+        }
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

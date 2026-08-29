@@ -20,6 +20,7 @@ export default function EnterpriseLanding() {
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <a href="#about" className="hover:text-white transition-colors">The Problem</a>
             <a href="#platform" className="hover:text-white transition-colors">Platform</a>
+            <Link href="/command" className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">Command Center</Link>
             <a href="#infrastructure" className="hover:text-white transition-colors">Infrastructure</a>
           </div>
           <div className="flex items-center gap-4">

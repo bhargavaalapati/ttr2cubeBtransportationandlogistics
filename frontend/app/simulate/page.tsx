@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-// Swapped to react-icons
-import { FiMapPin, FiClock, FiShield, FiAlertTriangle, FiCheckCircle, FiActivity } from "react-icons/fi";
+import { FiMapPin, FiClock, FiShield, FiAlertTriangle, FiCheckCircle, FiActivity, FiMic } from "react-icons/fi";
 import { FaBus, FaTrain, FaCar } from "react-icons/fa";
 
 interface Report {
@@ -41,6 +40,7 @@ interface DashboardData {
 }
 
 export default function BoardWiseDashboard() {
+  const [isRecording, setIsRecording] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
   const [sortPref, setSortPref] = useState("Reliability");
   const [isOffline, setIsOffline] = useState(false);
@@ -65,17 +65,6 @@ export default function BoardWiseDashboard() {
 
   const triggerScenario = async (id: string) => {
     try { await fetch(`http://localhost:8000/api/scenario/${id}`, { method: "POST" }); fetchState(); } catch(e) {}
-  };
-
-  const submitReport = async (crowding: string) => {
-    try {
-      await fetch(`http://localhost:8000/api/report`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ crowding })
-      });
-      fetchState();
-    } catch(e) {}
   };
 
   const simulateTime = async () => {
@@ -132,6 +121,8 @@ export default function BoardWiseDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-emerald-500/30 pb-20">
+      
+      {/* CLEANED UP NAVBAR */}
       <nav className="border-b border-slate-800/60 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.href='/'}>
@@ -139,8 +130,14 @@ export default function BoardWiseDashboard() {
             <span className="font-bold text-xl tracking-tight">BoardWise</span>
             <span className="hidden sm:inline text-slate-400 text-sm ml-4">Urban Transit Intelligence</span>
           </div>
-          <div className="flex items-center gap-3 text-sm font-medium">
-            <span className="text-slate-300">Hyderabad</span>
+          <div className="flex items-center gap-4 text-sm font-medium">
+            <button 
+              onClick={() => window.location.href='/command'}
+              className="hidden sm:flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+            >
+              Open Command Center
+            </button>
+            <span className="text-slate-300 ml-2 border-l border-slate-700 pl-4">Hyderabad</span>
             <div className="flex items-center gap-1.5 bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-full border border-rose-500/20">
               <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse"></div>
               Live Mode
@@ -150,6 +147,8 @@ export default function BoardWiseDashboard() {
       </nav>
 
       <main className="max-w-5xl mx-auto px-6 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* LEFT COLUMN */}
         <div className="lg:col-span-7 space-y-6">
           <div className="mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">Can you actually board your bus?</h1>
@@ -245,6 +244,7 @@ export default function BoardWiseDashboard() {
 
         </div>
 
+        {/* RIGHT COLUMN */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
@@ -297,7 +297,7 @@ export default function BoardWiseDashboard() {
             <div className="space-y-4 mb-5 border-l-2 border-slate-800 ml-2 pl-4 max-h-48 overflow-y-auto">
               {route_info.reports.map((rep: Report) => (
                 <div key={rep.id} className="relative">
-                  <div className="absolute -left-5.25 top-1 h-2.5 w-2.5 rounded-full bg-slate-400 ring-4 ring-slate-900"></div>
+                  <div className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-slate-400 ring-4 ring-slate-900"></div>
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="font-medium text-sm text-slate-200">Bus is {rep.crowding}</div>
@@ -311,18 +311,79 @@ export default function BoardWiseDashboard() {
               ))}
             </div>
 
+            {/* INTEGRATED AI SMART REPORT (VOICE + TEXT) */}
             <div className="pt-4 border-t border-slate-800">
-              <div className="text-xs font-semibold text-slate-400 mb-2 uppercase">Report Current State</div>
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => submitReport("FULL")} className="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-rose-400 text-sm py-2 rounded-lg font-medium transition-colors">Bus is Full</button>
-                <button onClick={() => submitReport("EMPTY")} className="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-sm py-2 rounded-lg font-medium transition-colors">Bus is Empty</button>
+              <div className="text-xs font-semibold text-emerald-400 mb-2 uppercase flex items-center justify-between">
+                <span className="flex items-center gap-1"><FiActivity /> AI Smart Report</span>
+                {isRecording && <span className="text-rose-400 animate-pulse text-[10px]">Listening...</span>}
               </div>
+              <form 
+                id="ai-report-form"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const input = form.elements.namedItem('reportText') as HTMLInputElement;
+                  if(!input.value) return;
+                  
+                  try {
+                    await fetch('http://localhost:8000/api/ai_report', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ text: input.value })
+                    });
+                    input.value = '';
+                    fetchState();
+                  } catch(err) {}
+                }}
+                className="flex gap-2"
+              >
+                <div className="relative w-full">
+                  <input 
+                    type="text" 
+                    id="reportText"
+                    name="reportText"
+                    placeholder="Type or speak: 'Bus is packed!'" 
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-10 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                    autoComplete="off"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      // @ts-ignore - Web Speech API
+                      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                      if (!SpeechRecognition) return alert("Browser does not support voice input.");
+                      
+                      const recognition = new SpeechRecognition();
+                      recognition.lang = 'en-IN';
+                      
+                      recognition.onstart = () => setIsRecording(true);
+                      recognition.onend = () => setIsRecording(false);
+                      
+                      recognition.onresult = (event: any) => {
+                        const transcript = event.results[0][0].transcript;
+                        const inputEl = document.getElementById('reportText') as HTMLInputElement;
+                        if(inputEl) inputEl.value = transcript;
+                        document.getElementById('ai-report-form')?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                      };
+                      
+                      recognition.start();
+                    }}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md transition-colors ${isRecording ? 'bg-rose-500/20 text-rose-400' : 'text-slate-400 hover:text-emerald-400'}`}
+                  >
+                    <FiMic className="h-4 w-4" />
+                  </button>
+                </div>
+                <button type="submit" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-4 py-2 rounded-lg font-bold text-sm transition-colors">
+                  Send
+                </button>
+              </form>
             </div>
           </div>
 
         </div>
       </main>
 
+      {/* FIXED DEMO SIMULATOR PANEL */}
       <div className="fixed bottom-6 right-6 w-80 bg-slate-800 border-2 border-indigo-500 rounded-xl shadow-2xl overflow-hidden z-50">
         <div className="bg-indigo-600 px-4 py-2 flex items-center justify-between">
           <span className="text-sm font-bold text-white tracking-wide uppercase">Hackathon Demo Controls</span>
