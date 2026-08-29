@@ -31,6 +31,7 @@ export default function EnterpriseLanding() {
             <a href="#platform" className="hover:text-white transition-colors">
               Platform
             </a>
+            <Link href="/plan" className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">Plan a Trip</Link>
             <Link
               href="/command"
               className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold"
