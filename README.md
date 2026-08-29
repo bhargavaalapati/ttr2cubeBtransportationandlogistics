@@ -10,10 +10,6 @@ AI-powered urban transit decision intelligence for Hyderabad commuters.
 
 </div>
 
-### **Don't just track the bus. Know if you can board it.**
-
-AI-powered urban transit decision intelligence for Hyderabad commuters.
-
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://www.python.org/)
