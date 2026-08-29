@@ -2,11 +2,13 @@
 
 <div align="center">
 
-<img src="./frontend/public/commute_pics
+<img src="./assets/commute_pics.png" alt="BoardWise - Transit Decision Intelligence" width="100%"/>
 
+### **Don't just track the bus. Know if you can board it.**
 
+AI-powered urban transit decision intelligence for Hyderabad commuters.
 
-.png" alt="BoardWise - Transit Decision Intelligence" width="100%"/>
+</div>
 
 ### **Don't just track the bus. Know if you can board it.**
 
