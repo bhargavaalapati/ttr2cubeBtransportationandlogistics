@@ -39,6 +39,9 @@ interface DashboardData {
   alternatives: Alternative[];
 }
 
+// Dynamically reference the environment variable with fallback for local development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function BoardWiseDashboard() {
   const [isRecording, setIsRecording] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
@@ -47,7 +50,7 @@ export default function BoardWiseDashboard() {
 
   const fetchState = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/state");
+      const res = await fetch(`${API_URL}/api/state`);
       if (!res.ok) throw new Error("Network response was not ok");
       const json = await res.json();
       setData(json);
@@ -64,11 +67,11 @@ export default function BoardWiseDashboard() {
   }, [fetchState]);
 
   const triggerScenario = async (id: string) => {
-    try { await fetch(`http://localhost:8000/api/scenario/${id}`, { method: "POST" }); fetchState(); } catch(e) {}
+    try { await fetch(`${API_URL}/api/scenario/${id}`, { method: "POST" }); fetchState(); } catch(e) {}
   };
 
   const simulateTime = async () => {
-    try { await fetch(`http://localhost:8000/api/simulate_time`, { method: "POST" }); fetchState(); } catch(e) {}
+    try { await fetch(`${API_URL}/api/simulate_time`, { method: "POST" }); fetchState(); } catch(e) {}
   };
 
   // BEAUTIFUL OFFLINE STATE
@@ -326,7 +329,7 @@ export default function BoardWiseDashboard() {
                   if(!input.value) return;
                   
                   try {
-                    await fetch('http://localhost:8000/api/ai_report', {
+                    await fetch(`${API_URL}/api/ai_report`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ text: input.value })
