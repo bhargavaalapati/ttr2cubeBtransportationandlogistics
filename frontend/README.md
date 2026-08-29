@@ -1,32 +1,36 @@
-# BoardWise — Urban Transit Intelligence
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Problem
-Hyderabad commuters know exactly *when* a bus is arriving, but often don't know if they can actually board it. A bus arriving in 2 minutes is useless if it's completely full or notoriously skips the stop.
+## Getting Started
 
-## Solution
-BoardWise shifts the paradigm from ETA tracking to **Decision Intelligence**. We predict a Boarding Confidence Score (BCS) and recommend multi-modal alternatives if boarding is unlikely.
+First, run the development server:
 
-## Core Innovation
-**Boarding Confidence Score (0-100)**
-A deterministic formula weighting multi-source signals:
-- **40% Crowding** (Decayed crowdsourced reports + base historical load)
-- **30% Stop Reliability** (Historical rate of ghost-stops/skips at this junction)
-- **20% Punctuality** (Historical adherence to schedule)
-- **10% Freshness** (Exponential decay applied to report age)
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## MVP Architecture
-- **Frontend:** Next.js (App Router), Tailwind CSS, Lucide Icons.
-- **Backend Intelligence:** FastAPI, Pydantic, Python.
-- **Data Status:** Currently utilizing deterministic simulated data for rapid hackathon demonstration.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Future Scale
-The architecture is designed to integrate seamlessly with:
-- TGSRTC GTFS-Realtime feeds
-- Beckn/ONDC for multi-modal ticket booking (Metro/Auto)
-- Sarvam AI for vernacular voice reporting ("218D lo full rush undi")
-- Hardware-backed cryptographic Proof of Location for report trust verification
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## How to Run the Demo
-1. Terminal 1 (Backend): `cd backend && source venv/bin/activate && uvicorn main:app --reload`
-2. Terminal 2 (Frontend): `cd frontend && npm run dev`
-3. Open `http://localhost:3000`
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
