@@ -75,11 +75,12 @@ Gemini explains only the returned route evidence. It never invents routes, fares
 | `/` | Product landing page | Signed in |
 | `/plan` | Hyderabad trip planner and route comparison | Signed in |
 | `/simulate` | Live BCS, reports, and judge scenarios | Signed in |
+| `/admin` | Protected operational console and commuter signal monitor | Admin only |
 | `/login` | Login with demo autofill | Public |
 | `/signup` | Create commuter account | Public |
 | `/docs` | FastAPI interactive API docs | Backend |
 
-The frontend command-center page was intentionally removed to keep the product focused. The backend admin endpoint remains protected for API-level administration.
+The admin login exists for role-based operations: admins can inspect report volume, service status, and recent commuter signals at `/admin`; commuters are blocked from this view.
 
 ## Demo Accounts
 
@@ -151,13 +152,13 @@ Open `http://localhost:3000`.
 ## Judge Walkthrough
 
 1. Sign in with the admin demo account.
-2. Open `/simulate` and show the current BCS, freshness, crowding, and action.
-3. Apply scenario `A` to create an overcrowded, skipped-stop report.
-4. Show the decision move toward `SWITCH`.
-5. Submit: `The bus is packed and skipped the stop`.
-6. Open `/plan` and search `Ameerpet` to `HITEC City`.
-7. Compare provider-backed route results and expand **Why this recommendation?**
-8. Ask BoardWise: `Why was this route recommended?`
+2. Open `/admin` and show the protected operational metrics and recent signals.
+3. Open `/simulate` and show the current BCS, freshness, crowding, and action.
+4. Apply scenario `A` to create an overcrowded, skipped-stop report.
+5. Show the decision move toward `SWITCH`.
+6. Submit: `The bus is packed and skipped the stop`.
+7. Open `/plan` and search `Ameerpet` to `HITEC City`.
+8. Compare provider-backed route results, expand **Why this recommendation?**, and ask BoardWise why.
 
 Demo story:
 
