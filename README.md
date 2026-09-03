@@ -313,7 +313,7 @@ BoardWise/
 ```text
 Root Directory: backend
 Build: pip install -r requirements.txt
-Start: uvicorn main:app --host 0.0.0.0 --port 10000
+Start: uvicorn main:app --reload
 ```
 
 Set:
