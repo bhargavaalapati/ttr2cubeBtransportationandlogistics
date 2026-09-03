@@ -1,4 +1,4 @@
-# 🚌 BoardWise
+# BoardWise
 
 <div align="center">
 
@@ -6,203 +6,135 @@
 
 ### **Don't just track the bus. Know if you can board it.**
 
-AI-powered urban transit decision intelligence for Hyderabad commuters.
+AI-powered transit decision intelligence for Hyderabad commuters.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Motion](https://img.shields.io/badge/Motion-enabled-7C3AED)](https://motion.dev/)
 
 </div>
 
 ---
 
-## 🚦 What is BoardWise?
+## The Problem
 
-Most transit apps answer:
+Most transit apps answer **"When will my bus arrive?"** BoardWise answers **"Can I actually board it?"**
 
-> **"When will my bus arrive?"**
-
-BoardWise answers:
-
-> **"Can I actually board it?"**
-
-It calculates a **Boarding Confidence Score (BCS) from 0–100** using:
-
-* 🧍 **Crowding** — 40%
-* 📍 **Stop reliability** — 30%
-* ⏱️ **Punctuality** — 20%
-* 🕐 **Data freshness** — 10%
-
-When boarding confidence is low, BoardWise recommends the best alternative — **Metro, another bus, walking, or auto** — based on time, cost, and reliability.
+A bus can be on time and still be unusable because it is overcrowded or skips a stop. BoardWise turns commuter reports into a transparent **Boarding Confidence Score (BCS)** and a practical action:
 
 ```text
-Commuter Reports + Transit Signals
-                ↓
-      Freshness + Trust Layer
-                ↓
-       Boarding Confidence
-                ↓
-        Decision Engine
-                ↓
-     ┌──────────┼──────────┐
-   BOARD       WAIT      SWITCH
-                         ↓
-                 Metro / Bus / Auto
+Commuter report -> Freshness + trust -> Boarding Confidence -> BOARD / WAIT / SWITCH
 ```
 
-> **Sense → Score → Explain → Recommend**
+BCS combines:
 
----
+- Crowding: 40%
+- Stop reliability: 30%
+- Punctuality: 20%
+- Report freshness: 10%
 
-## ✨ MVP Features
+Fresh reports matter more than stale reports through exponential freshness decay.
 
-* 📊 Explainable **Boarding Confidence Score**
-* 🧍 Crowding intelligence from commuter reports
-* 🕐 Exponential freshness decay
-* 🛡️ Simulated trust & location verification
-* 🤖 Natural-language `/api/ai_report`
-* 👻 Ghost-stop / stop reliability detection
-* 🚇 Multi-modal recommendations
-* 🎭 Deterministic demo scenarios
-* 🏙️ Commuter dashboard + transit command center
-* ⚡ Real-time UI updates from FastAPI state
+## What Makes It Different
 
----
+### Explainable decision receipt
 
-## 🖥️ Product
+Every trip recommendation exposes its evidence: duration, reliability, fare source, crowding, boarding confidence, provider, and uncertainty. Reviewers can see why the decision was made instead of trusting a black box.
 
-| Route       | Purpose                    |
-| ----------- | -------------------------- |
-| `/`         | Product landing & pitch    |
-| `/simulate` | 🚀 Live hackathon MVP      |
-| `/command`  | 🏙️ Transit command center |
-| `/docs`     | FastAPI API documentation  |
+### Grounded AI assistant
 
-### Demo Scenarios
+Users can ask **Ask BoardWise** questions such as:
 
-| Scenario                 | Result                                  |
-| ------------------------ | --------------------------------------- |
-| `A` — Crowded 218D       | 🔴 Low BCS → Switch mode                |
-| `B` — Good 218D          | 🟢 High BCS → Board                     |
-| `C` — Ghost Stop         | ⚠️ Low stop reliability                 |
-| `D` — Freshness Conflict | 🕐 Fresh reports outweigh stale reports |
+- Why was this route recommended?
+- Which fare is verified?
+- What data is missing?
 
----
+Gemini explains only the returned route evidence. It never invents routes, fares, or live availability. A deterministic fallback keeps the core demo usable without Gemini.
 
-# 🏗️ Tech Stack
+## Features
 
-**Frontend**
+- Hyderabad-specific place search with common hubs, landmarks, airport, and metro areas
+- Debounced as-you-type search with provider labels and browser geolocation
+- Real road routing through OSRM/OpenStreetMap
+- Google Places and Google Routes support when a usable key is available
+- Transparent fare states: provider fare, unavailable, or no live partner connected
+- Natural-language commuter reports through `/api/ai_report`
+- Ghost-stop and skipped-stop detection
+- Live BCS updates and deterministic judge scenarios A-D
+- JWT authentication with commuter-only public signup
+- Admin-only command-center API with role-based authorization
+- Responsive Next.js interface with Motion interactions
 
-`Next.js` · `React` · `TypeScript` · `Tailwind CSS v4` · `Framer Motion`
+## Routes
 
-**Backend**
+| Route | Purpose | Access |
+| --- | --- | --- |
+| `/` | Product landing page | Signed in |
+| `/plan` | Hyderabad trip planner and route comparison | Signed in |
+| `/simulate` | Live BCS, reports, and judge scenarios | Signed in |
+| `/login` | Login with demo autofill | Public |
+| `/signup` | Create commuter account | Public |
+| `/docs` | FastAPI interactive API docs | Backend |
 
-`Python` · `FastAPI` · `Pydantic` · `Uvicorn`
+The frontend command-center page was intentionally removed to keep the product focused. The backend admin endpoint remains protected for API-level administration.
 
-**MVP Data**
+## Demo Accounts
 
-Deterministic in-memory transit state — intentionally database-free for a fast, reproducible hackathon demo.
-
----
-
-# 🚀 Quick Start
-
-### 1. Clone
-
-```bash
-git clone https://github.com/YOUR_USERNAME/boardwise.git
-cd boardwise
+```text
+Admin:     admin@boardwise.hyderabad / admin123
+Commuter:  tester@boardwise.hyderabad / tester123
 ```
 
----
+Public signup always creates a `commuter`; it cannot create an admin account.
 
-## 2. Backend
+## Tech Stack
 
-```bash
-cd backend
+**Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS v4, Motion, Lucide
 
-python -m venv .venv
-```
+**Backend:** Python, FastAPI, SQLAlchemy, SQLite, Pydantic, Uvicorn, JWT, Passlib/bcrypt
 
-### Activate virtual environment
+**Data and providers:** Hyderabad directory, SQLite commuter reports, OSRM/OpenStreetMap, Photon, optional Google Places/Routes, optional Gemini
 
-**macOS / Linux**
+## Quick Start
 
-```bash
-source .venv/bin/activate
-```
-
-**Windows**
+### Backend
 
 ```powershell
+cd backend
+python -m venv .venv
 .venv\Scripts\Activate.ps1
-```
-
-### Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### Create backend environment
-
-Create:
-
-```text
-backend/.env
-```
-
-Example:
+Create `backend/.env`:
 
 ```env
 FRONTEND_URL=http://localhost:3000
-PORT=8000
+GEMINI_API_KEY=your_gemini_key
+GOOGLE_MAPS_API_KEY=your_google_key
 ```
 
-If your backend uses additional secrets, add them here:
+Only add provider keys if available. Never commit `.env`.
 
-```env
-OPENAI_API_KEY=your_key_here
-```
+Start FastAPI:
 
-> Never commit `.env` to Git. Add `.env` to `.gitignore`.
-
-### Start FastAPI
-
-```bash
+```powershell
 uvicorn main:app --reload --port 8000
 ```
 
-Backend:
+API docs: `http://localhost:8000/docs`
 
-**http://localhost:8000**
+### Frontend
 
-API docs:
-
-**http://localhost:8000/docs**
-
----
-
-## 3. Frontend
-
-Open a new terminal:
-
-```bash
+```powershell
 cd frontend
-
 npm install
 ```
 
-Create:
-
-```text
-frontend/.env.local
-```
-
-Add:
+Create `frontend/.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -210,152 +142,71 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 Start Next.js:
 
-```bash
+```powershell
 npm run dev
 ```
 
-Frontend:
+Open `http://localhost:3000`.
 
-**http://localhost:3000**
+## Judge Walkthrough
 
----
+1. Sign in with the admin demo account.
+2. Open `/simulate` and show the current BCS, freshness, crowding, and action.
+3. Apply scenario `A` to create an overcrowded, skipped-stop report.
+4. Show the decision move toward `SWITCH`.
+5. Submit: `The bus is packed and skipped the stop`.
+6. Open `/plan` and search `Ameerpet` to `HITEC City`.
+7. Compare provider-backed route results and expand **Why this recommendation?**
+8. Ask BoardWise: `Why was this route recommended?`
 
-# 🎬 Run the Demo
+Demo story:
 
-Open:
+> Most apps show the fastest route. BoardWise shows whether that route is actually usable right now, and proves the decision with evidence.
 
-### 🚀 Commuter MVP
+## API
 
-```text
-http://localhost:3000/simulate
-```
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/auth/register` | Create commuter account |
+| `POST` | `/api/auth/login` | Return JWT session |
+| `GET` | `/api/auth/me` | Validate session |
+| `GET` | `/api/state` | Current BCS and report state |
+| `GET` | `/api/places/search` | Search Hyderabad places |
+| `POST` | `/api/trips/plan` | Compare provider-backed routes |
+| `POST` | `/api/trips/explain` | Grounded AI trip Q&A |
+| `POST` | `/api/ai_report` | Parse and save natural-language report |
+| `POST` | `/api/scenario/{id}` | Apply demo scenario A-D |
+| `GET` | `/api/admin/command_center` | Admin-only operational data |
 
-### 🏙️ Command Center
-
-```text
-http://localhost:3000/command
-```
-
-### 🏠 Landing Page
-
-```text
-http://localhost:3000
-```
-
----
-
-# 🔌 API
-
-| Method | Endpoint             | Purpose                   |
-| ------ | -------------------- | ------------------------- |
-| `GET`  | `/api/state`         | Current BCS & route state |
-| `POST` | `/api/scenario/{id}` | Load demo scenario        |
-| `POST` | `/api/report`        | Submit crowd report       |
-| `POST` | `/api/simulate_time` | Advance simulated time    |
-| `POST` | `/api/ai_report`     | Parse commuter report     |
-
-Example:
-
-```bash
-curl -X POST http://localhost:8000/api/ai_report \
-  -H "Content-Type: application/json" \
-  -d '{"text":"The bus is packed and did not stop"}'
-```
-
----
-
-# 🧠 Boarding Confidence
+## Architecture
 
 ```text
-BCS =
-  40% × Crowding
-+ 30% × Stop Reliability
-+ 20% × Punctuality
-+ 10% × Freshness
+Next.js UI
+   -> FastAPI API
+      -> SQLite reports + BCS engine
+      -> Hyderabad place directory
+      -> Google / Photon / OSRM providers
+      -> Gemini explanation using verified evidence
 ```
 
-Freshness:
+The current MVP uses an explainable weighted BCS engine, not a trained ML model. A future model can be trained from accumulated, labeled commuter reports once enough real observations exist; claiming training before that data exists would be misleading.
 
-```text
-freshness = exp(-age_minutes / 10)
-```
+## Deployment
 
-Fresh, verified reports have greater influence than old or unverified reports.
+### Render backend
 
----
+- Root directory: `backend`
+- Build: `pip install -r requirements.txt`
+- Start: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+- Set `FRONTEND_URL` to the deployed frontend URL.
 
-# 📁 Structure
+### Vercel frontend
 
-```text
-BoardWise/
-├── backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   └── .env
-│
-├── frontend/
-│   ├── app/
-│   │   ├── page.tsx
-│   │   ├── simulate/
-│   │   └── command/
-│   ├── package.json
-│   └── .env.local
-│
-└── README.md
-```
+- Root directory: `frontend`
+- Set `NEXT_PUBLIC_API_URL` to the deployed Render backend URL.
 
----
+Provider APIs require network access. Google transit routes and Google fare data require a usable Google Maps project; without it, place search and road routing continue through the Hyderabad directory and OpenStreetMap providers.
 
-# 🌐 Deployment
+## Status
 
-### Backend — Render
-
-```text
-Root Directory: backend
-Build: pip install -r requirements.txt
-Start: uvicorn main:app --reload
-```
-
-Set:
-
-```env
-FRONTEND_URL=https://your-vercel-app.vercel.app
-```
-
-### Frontend — Vercel
-
-Set:
-
-```env
-NEXT_PUBLIC_API_URL=https://your-render-backend.onrender.com
-```
-
----
-
-# ⚠️ Hackathon MVP
-
-BoardWise currently uses **simulated transit data and deterministic NLP**.
-
-No live TGSRTC/GTFS feed is required for the demo.
-
-The architecture is designed so simulated signals can later be replaced with:
-
-* GTFS-Realtime
-* TGSRTC data
-* Verified commuter reports
-* Multilingual voice AI
-* Mobility APIs
-* Persistent historical data
-* ML-based boarding prediction
-
----
-
-<div align="center">
-
-### 🚌 BoardWise
-
-**From "Where is my bus?" → "What's the smartest way to get there?"**
-
-Built for the hackathon 🚀
-
-</div>
+This is a focused hackathon MVP: real provider-backed routing where available, persistent commuter reports, explainable decisions, authentication, RBAC, and grounded AI. The next production step is verified GTFS/TGSRTC data, stronger report verification, historical evaluation, and a calibrated boarding-prediction model.
